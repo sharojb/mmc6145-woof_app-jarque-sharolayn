@@ -1,0 +1,1 @@
+export const SEARCH_DOGS = 'SEARCH_DOGS'
