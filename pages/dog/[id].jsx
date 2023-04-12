@@ -39,16 +39,12 @@ export default function Dog(props) {
   } else
   dog = dogSearchResults.find(dog => dog.googleId === dogId)
 
-  // No dog from search/context or getServerSideProps/favorites, redirect to Homepage
   useEffect(() => {
     if (!props.dog && !dog)
       router.push('/')
   }, [props.dog, dogSearchResults, dog, router])
 
   async function addToFavorites() {
-    // TODO: use fetch to call POST /api/dog
-    // Be sure to pass dog in body (use JSON.stringify)
-    // Call router.replace(router.asPath) if you receive a 200 status
     const res = await fetch("/api/dog", {
       method: "POST",
       body: JSON.stringify(dog)
@@ -56,9 +52,6 @@ export default function Dog(props) {
   if (res.status === 200) router.replace(router.asPath)
   }
   async function removeFromFavorites() {
-    // TODO: use fetch to call DELETE /api/dog
-    // Be sure to pass {id: <dog id>} in body (use JSON.stringify)
-    // Call router.replace(router.asPath) if you receive a 200 status
     const res = await fetch("/api/dog", {
       method: "DELETE",
       body: JSON.stringify(dog)
