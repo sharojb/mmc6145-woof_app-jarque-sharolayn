@@ -37,10 +37,6 @@ export const getServerSideProps = withIronSessionSsr(
 //       console.error(error);
 //     });
 //   }, [])
-
-  
-
-  
 // }
 
 export default function Home(props) {
