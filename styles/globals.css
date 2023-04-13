@@ -1,6 +1,6 @@
 :root {
-  --primary: #1d6e7e;
-  --primaryDark: hsl(190, 63%, 22%);
+  --primary: #ecbfeb;
+  --primaryDark: hsl(317, 63%, 22%);
   --text: #333;
 }
 
@@ -15,7 +15,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   box-sizing: border-box;
-  background-color: white;
+  background-color:white;
   padding: 0 20px 40px;
 }
 
@@ -38,7 +38,7 @@ a:visited {
 
 button, .button {
   background-color: transparent;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-weight: 300;
   text-transform: uppercase;
   font-size: 0.8rem;
@@ -54,8 +54,9 @@ button, .button {
 input {
   border-radius: 4px;
   border-width: 1px;
-  padding: 8px;
+  padding: 9px;
   font-size: 0.8rem;
+  margin: 20px;
 }
 
 :is(button, .button):is(:hover, :focus) {

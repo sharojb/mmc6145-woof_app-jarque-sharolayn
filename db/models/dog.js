@@ -5,7 +5,7 @@ const dogSchema = new Schema({
   min_height: Number,
   max_height: Number,
   min_life_expectancy: [String],
-  thumbnail: String,
+  image_link: String,
   energy: String,
   previewLink: String,
 })

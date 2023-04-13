@@ -7,20 +7,18 @@ export default function Header(props) {
   return (
     <header className={styles.header}>
       <p>
-        <Link href="/">Woof</Link>
+        <Link href="/">Home</Link>
       </p>
       <div className={styles.links}>
       {props.isLoggedIn ? (
         <>
           <Link href="/favorites">Favorites</Link>
-          <Link href="/search">Search</Link>
           <a href="#" onClick={logout}>
             Logout
           </a>
         </>
       ) : (
         <>
-          <Link href="/search">Search</Link>
           <Link href="/login">Login</Link>
           <Link href="/signup">Sign Up</Link>
         </>

@@ -116,9 +116,11 @@ export default function Dog(props) {
 function DogInfo({
   image_link,
   name,
+  energy,
   playfulness,
   protectiveness,
-  trainability
+  trainability,
+  shedding
 }) {
   return (
     <>
@@ -127,19 +129,23 @@ function DogInfo({
           <h1>{name}</h1>
         </div>
         
-          <img src={image_link
+          {/* <img src={image_link
             ? image_link
-            : "https://via.placeholder.com/128x190?text="} alt={name} />
+            : "https://via.placeholder.com/128x190?text="} alt={name} /> */}
           
       </div>
       
       <div style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
-            <p>Playfulness</p>
+            <p>Energy</p>
+            <BorderLinearProgress variant="determinate" value={(energy/5)*100} />
+            <p>Payfulness</p>
             <BorderLinearProgress variant="determinate" value={(playfulness/5)*100} />
-            <p>protectiveness</p>
+            <p>Protectiveness</p>
             <BorderLinearProgress variant="determinate" value={(protectiveness/5)*100} />
-            <p>trainability</p>
+            <p>Trainability</p>
             <BorderLinearProgress variant="determinate" value={(trainability/5)*100} />
+            <p>Shedding</p>
+            <BorderLinearProgress variant="determinate" value={(shedding/5)*100} />
       </div>
     
     </>

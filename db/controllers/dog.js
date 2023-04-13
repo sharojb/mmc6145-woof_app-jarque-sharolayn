@@ -8,11 +8,11 @@ export async function getAll(userId) {
   return user.favoriteDogs.map(dog => normalizeId(dog))
 }
 
-export async function getByGoogleId(userId, dogId) {
+export async function getByDodId(userId, dogId) {
   await dbConnect()
   const user = await User.findById(userId).lean()
   if (!user) return null
-  const dog = user.favoriteDogs.find(dog => dog.googleId === dogId)
+  const dog = user.favoriteDogs.find(dog => dog.id === dogId)
   if (dog) return normalizeId(dog)
   return null
 }
@@ -25,7 +25,7 @@ export async function add(userId, dog) {
     { new: true }
   )
   if (!user) return null
-  const addedDog = user.favoriteDogs.find(bk => bk.googleId === dog.googleId)
+  const addedDog = user.favoriteDogs.find(dg => dg.id === dog.id)
   return normalizeId(addedDog)
 }
 

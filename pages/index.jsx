@@ -87,10 +87,10 @@ export default function Home(props) {
 
       <Header isLoggedIn={props.isLoggedIn} username={props?.user?.username} />
       <main className={styles.homepage}>
-      <h1>Welcome to Woof</h1>
-  <p>Woof is the app for sniffing, researching, previewing, and smile for dogs.</p>
+      <h1>Woof</h1>
+  <p>Where you sniff, search and love dogs.</p>
         <form onSubmit={handleSubmit} className={styles.form}>
-          <label htmlFor="dog-search">Search by name, height, and/or keywords:</label>
+          <label htmlFor="dog-search">Search by name, energy, and/or keywords:</label>
           <div ref={inputDivRef}>
             <input
               ref={inputRef}
