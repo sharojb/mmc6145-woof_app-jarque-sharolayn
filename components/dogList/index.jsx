@@ -5,7 +5,7 @@ import styles from './style.module.css'
 export default function DogList({dogs}) {
   return (
     <div className={styles.list}>
-      {dogs.map(dog => <Link key={dog.googleId} href={`/dog/${dog.googleId}`} style={{textDecoration: 'none'}}>
+      {dogs.map(dog => <Link key={dog.id} href={`/dog/${dog.id}`} style={{textDecoration: 'none'}}>
         <DogPreview {...dog} />
       </Link>)}
     </div>

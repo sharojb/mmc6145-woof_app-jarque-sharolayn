@@ -8,6 +8,21 @@ import { useDogContext } from "../../context/dog"
 import Header from '../../components/header'
 import db from '../../db'
 import styles from '../../styles/Dog.module.css'
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  width: "100%",
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+  },
+}));
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, params }) {
@@ -15,7 +30,7 @@ export const getServerSideProps = withIronSessionSsr(
     const props = {};
     if (user) {
       props.user = req.session.user;
-      const dog = await db.dog.getByGoogleId(req.session.user.id, params.id)
+      const dog = await db.dog.getDogId(req.session.user.id, params.id)
       if (dog)
         props.dog = dog
     }
@@ -37,7 +52,7 @@ export default function Dog(props) {
     dog = props.dog
     isFavoriteDog = true
   } else
-  dog = dogSearchResults.find(dog => dog.googleId === dogId)
+  dog = dogSearchResults.find(dog => dog.id === dogId)
 
   useEffect(() => {
     if (!props.dog && !dog)
@@ -71,8 +86,8 @@ export default function Dog(props) {
       {
         dog &&
         <main>
-          <DogInfo isFavorite={isFavoriteDog} {...dog}/>
-          <div className={styles.controls}>
+          <DogInfo {...dog}/>
+          {/* <div className={styles.controls}>
             {
               !isLoggedIn
               ? <>
@@ -91,7 +106,7 @@ export default function Dog(props) {
             <a href="#" onClick={() => router.back()}>
               Return
             </a>
-          </div>
+          </div> */}
         </main>
       }
     </>
@@ -99,54 +114,34 @@ export default function Dog(props) {
 }
 
 function DogInfo({
-  title,
-  authors,
-  thumbnail,
-  description,
-  isFavorite,
-  pageCount,
-  categories,
-  previewLink
+  image_link,
+  name,
+  playfulness,
+  protectiveness,
+  trainability
 }) {
   return (
     <>
       <div className={styles.titleGroup}>
         <div>
-          <h1>{title}{isFavorite && <sup>⭐</sup>}</h1>
-          {
-            authors && authors.length > 0 &&
-            <h2>By: {authors.join(", ").replace(/, ([^,]*)$/, ', and $1')}</h2>
-          }
-          {
-            categories && categories.length > 0 &&
-            <h3>Category: {categories.join(", ").replace(/, ([^,]*)$/, ', and $1')}</h3>
-          }
+          <h1>{name}</h1>
         </div>
-        <a target="_BLANK"
-          href={previewLink}
-          className={styles.imgContainer}
-          rel="noreferrer">
-          <img src={thumbnail
-            ? thumbnail
-            : "https://via.placeholder.com/128x190?text=NO COVER"} alt={title} />
-          <span>Look Inside!</span>
-        </a>
+        
+          <img src={image_link
+            ? image_link
+            : "https://via.placeholder.com/128x190?text="} alt={name} />
+          
       </div>
-      <p>Description:<br/>{description}</p>
-      <p>Pages: {pageCount}</p>
-      <div className={styles.links}>
-        <span>Order online:</span>
-        <a target="_BLANK"
-          href={`https://www.amazon.com/s?k=${title} ${authors ? authors[0] : ""}`}
-          rel="noreferrer">
-          Amazon
-        </a>
-        <a target="_BLANK"
-          href={`https://www.barnesandnoble.com/s/${title} ${authors ? authors[0] : ""}`}
-          rel="noreferrer">
-          Barnes & Noble
-        </a>
+      
+      <div style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
+            <p>Playfulness</p>
+            <BorderLinearProgress variant="determinate" value={(playfulness/5)*100} />
+            <p>protectiveness</p>
+            <BorderLinearProgress variant="determinate" value={(protectiveness/5)*100} />
+            <p>trainability</p>
+            <BorderLinearProgress variant="determinate" value={(trainability/5)*100} />
       </div>
+    
     </>
   )
 }

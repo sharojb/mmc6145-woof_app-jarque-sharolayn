@@ -7,6 +7,7 @@ import Header from '../components/header'
 import * as actions from '../context/dog/actions'
 import { useState, useRef } from 'react'
 import styles from '../styles/Search.module.css'
+import axios from "axios";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -34,19 +35,22 @@ export default function Search(props) {
     if (fetching || !query.trim() || query === previousQuery) return
     setPreviousQuery(query)
     setFetching(true)
-    const res = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?langRestrict=en&q=${query}&maxResults=16`
-    )
-    if (res.status !== 200) return
-    const data = await res.json()
+    const response = await axios.get('https://api.api-ninjas.com/v1/dogs?name=beagle', 
+    {
+      headers: {
+        'X-Api-Key': 'eBmzvUB1ezkQjt+wEc9wQQ==BFHrx76kZPLO2Hdx'
+      }
+    })
+    if (response.status !== 200) return
+    // const data = await res.json()
+    console.log(response.data)
+    const data = response.data
     dispatch({
       action: actions.SEARCH_DOGS,
       payload: data
-        ?.items
-        ?.map(({id, volumeInfo}) => ({
-          ...volumeInfo,
-          googleId: id,
-          thumbnail: volumeInfo?.imageLinks?.thumbnail
+        ?.map((dog) => ({
+          id: dog.name,
+          ...dog
         }))
     })
     setFetching(false)

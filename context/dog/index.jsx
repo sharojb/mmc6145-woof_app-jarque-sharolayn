@@ -32,7 +32,7 @@ export const useDogContext = () => {
 export const DogProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
-    <DogContext.Provider value={{ state, dispatch }}>
+    <DogContext.Provider value={[ state, dispatch ]}>
       {children}
     </DogContext.Provider>
   )

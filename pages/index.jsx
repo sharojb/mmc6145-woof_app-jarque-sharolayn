@@ -1,10 +1,14 @@
 import Head from "next/head";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
-import Header from "../components/header";
+import DogList from "../components/dogList";
+import Header from '../components/header'
+import * as actions from '../context/dog/actions'
 import styles from "../styles/Home.module.css";
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
+import { useDogContext } from "../context/dog";
+
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -40,22 +44,38 @@ export const getServerSideProps = withIronSessionSsr(
 // }
 
 export default function Home(props) {
-  const [data, setData] = useState([])
+  const [{dogSearchResults}, dispatch] = useDogContext()
+  const [query, setQuery] = useState("")
+  const [fetching, setFetching] = useState(false)
+  const [previousQuery, setPreviousQuery] = useState()
+  const inputRef = useRef()
+  const inputDivRef = useRef()
 
-  useEffect(()=> {
-    axios.get('https://api.api-ninjas.com/v1/dogs?name=beagle', 
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (fetching || !query.trim() || query === previousQuery) return
+    setPreviousQuery(query)
+    setFetching(true)
+    const response = await axios.get('https://api.api-ninjas.com/v1/dogs?name=beagle', 
     {
       headers: {
         'X-Api-Key': 'eBmzvUB1ezkQjt+wEc9wQQ==BFHrx76kZPLO2Hdx'
       }
-    }).then(response => {
-      console.log(response)
-      setData(response.data);
     })
-    .catch(error => {
-      console.error(error);
-    });
-  }, [])
+    if (response.status !== 200) return
+    // const data = await res.json()
+    console.log(response.data)
+    const data = response.data
+    dispatch({
+      action: actions.SEARCH_DOGS,
+      payload: data
+        ?.map((dog) => ({
+          id: dog.name,
+          ...dog
+        }))
+    })
+    setFetching(false)
+  }
 
   return (
     <>
@@ -66,20 +86,61 @@ export default function Home(props) {
       </Head>
 
       <Header isLoggedIn={props.isLoggedIn} username={props?.user?.username} />
-
       <main className={styles.homepage}>
-        <h1>Welcome to Woof</h1>
-        <p>Woof is the app for sniffing, researching, previewing, and smile for dogs.</p>
-    <div>
-      {data.map(item => (
-        <div key='hey'>
-          <h2>{item.name}</h2>
-          <img src={item.image_link}></img>
-        </div>
-      ))}
-      </div>
+      <h1>Welcome to Woof</h1>
+  <p>Woof is the app for sniffing, researching, previewing, and smile for dogs.</p>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label htmlFor="dog-search">Search by name, height, and/or keywords:</label>
+          <div ref={inputDivRef}>
+            <input
+              ref={inputRef}
+              type="text"
+              name="dog-search"
+              id="dog-search"
+              value={query}
+              autoFocus={true}
+              onChange={e => setQuery(e.target.value)}/>
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+        {
+          fetching
+          ? <Loading />
+          : dogSearchResults?.length
+          ? <DogList dogs={dogSearchResults}/>
+          : <NoResults
+          {...{inputRef, inputDivRef, previousQuery}}
+          clearSearch={() => setQuery("")}/>
+        }
       </main>
-
     </>
-  );
+  )
+}
+
+function Loading() {
+  return <span className={styles.loading}>Still sniffing</span>
+}
+
+function NoResults({ inputDivRef, inputRef, previousQuery, clearSearch }) {
+  function handleLetsSearchClick() {
+    inputRef.current.focus()
+    if (previousQuery) clearSearch()
+    if (inputDivRef.current.classList.contains(styles.starBounce)) return
+    inputDivRef.current.classList.add(styles.starBounce)
+    inputDivRef.current.onanimationend = function () {
+      inputDivRef.current.classList.remove(styles.starBounce)
+    }
+  }
+  return (
+    <div className={styles.noResults}>
+      <p><strong>{previousQuery ? `No Dogs found for "${previousQuery}"` : "Nothing to sniff yet"}</strong></p>
+      <button onClick={handleLetsSearchClick}>
+        {
+          previousQuery
+          ? `Sniff again?`
+          : `Let's find a dog!`
+        }
+      </button>
+    </div>
+  )
 }

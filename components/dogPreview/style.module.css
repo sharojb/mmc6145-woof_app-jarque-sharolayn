@@ -22,20 +22,20 @@
   margin: 0;
 }
 
-.preview img {
+/* .preview img {
   transition: 500ms ease;
   box-shadow: 4px 4px 8px #666;
   transform: rotateY(10deg);
   margin-bottom: 5px;
-}
+} */
 
 .preview:hover {
   color: var(--primary);
   border-color: var(--primary);
   text-decoration: underline;
 }
-
+/* 
 .preview:hover img {
   box-shadow: 2px 2px 12px #888;
   transform: rotateY(0deg) translateZ(20px);
-}
+} */
