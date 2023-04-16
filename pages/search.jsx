@@ -22,7 +22,7 @@ export const getServerSideProps = withIronSessionSsr(
   sessionOptions
 );
 
-export default function Search(props) {
+export default function Home(props) {
   const [{dogSearchResults}, dispatch] = useDogContext()
   const [query, setQuery] = useState("")
   const [fetching, setFetching] = useState(false)
@@ -35,7 +35,7 @@ export default function Search(props) {
     if (fetching || !query.trim() || query === previousQuery) return
     setPreviousQuery(query)
     setFetching(true)
-    const response = await axios.get('https://api.api-ninjas.com/v1/dogs?name=beagle', 
+    const response = await axios.get(`https://api.api-ninjas.com/v1/dogs?name=${query}`, 
     {
       headers: {
         'X-Api-Key': 'eBmzvUB1ezkQjt+wEc9wQQ==BFHrx76kZPLO2Hdx'
@@ -46,7 +46,7 @@ export default function Search(props) {
     console.log(response.data)
     const data = response.data
     dispatch({
-      action: actions.SEARCH_DOGS,
+      type: actions.SEARCH_DOGS,
       payload: data
         ?.map((dog) => ({
           id: dog.name,
