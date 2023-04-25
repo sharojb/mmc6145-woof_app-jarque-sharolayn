@@ -16,7 +16,6 @@ const UserSchema = new Schema({
   favoriteDogs: [dogSchema]
 })
 
-// hashes the password before it's stored in mongo
 UserSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, 10)
   next()

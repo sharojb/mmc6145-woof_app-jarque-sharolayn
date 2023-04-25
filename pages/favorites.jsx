@@ -4,7 +4,7 @@ import styles from "../styles/Favorites.module.css";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
-import dogList from "../components/dogList";
+import DogList from "../components/dogList";
 import db from "../db";
 
 export const getServerSideProps = withIronSessionSsr(
@@ -13,7 +13,6 @@ export const getServerSideProps = withIronSessionSsr(
     let dogs
     if (user)
       dogs = await db.dog.getAll(user.id)
-    // no dogs means db.dog.getAll failed because user does not exist
     if (!dogs) {
       req.session.destroy()
       return {
@@ -48,7 +47,7 @@ export default function Favorites(props) {
 
       <main>
         <h1 className={styles.title}>Favorite Dogs</h1>
-        {props.favoriteDogs.length > 0 ? <DogList dogs={props.favoriteDogss} /> : <NoDogText />}
+        {props.favoriteDogs.length > 0 ? <DogList dogs={props.favoriteDogs} /> : <NoDogText />}
       </main>
     </>
   );
@@ -58,7 +57,7 @@ function NoDogText() {
   return (
     <div className={styles.noDogs}>
       <p><strong>You don't have any dogs saved to your favorites.</strong></p>
-      <p>Why don't you <Link href="/search">go sniff</Link> and add some?</p>
+      <p>Why don't you <Link href="/">go sniff</Link> and add some?</p>
     </div>
   )
 }

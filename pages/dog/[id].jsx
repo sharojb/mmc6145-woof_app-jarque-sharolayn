@@ -9,6 +9,8 @@ import db from '../../db'
 import styles from '../../styles/Dog.module.css'
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { styled } from '@mui/material/styles';
+import { RiHeart2Line, RiHeartFill } from "react-icons/ri";
+import * as actions from "../../context/dog/actions"
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -26,10 +28,11 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, params }) {
     const { user } = req.session;
+    console.log(params)
     const props = {};
     if (user) {
       props.user = req.session.user;
-      const dog = await db.dog.getDogId(req.session.user.id, params.id)
+      const dog = await db.dog.getByDogName(req.session.user.id, params.id)
       if (dog)
         props.dog = dog
     }
@@ -43,7 +46,7 @@ export default function Dog(props) {
   const router = useRouter()
   const dogId = router.query.id
   const { isLoggedIn } = props
-  const [{dogSearchResults}] = useDogContext()
+  const [{dogSearchResults},dispatch] = useDogContext()
 
   let isFavoriteDog = false
   let dog
@@ -52,25 +55,20 @@ export default function Dog(props) {
     isFavoriteDog = true
   } else
   dog = dogSearchResults.find(dog => dog.id === dogId)
+  console.log(isFavoriteDog)
 
   useEffect(() => {
     if (!props.dog && !dog)
       router.push('/')
   }, [props.dog, dogSearchResults, dog, router])
 
-  async function addToFavorites() {
-    const res = await fetch("/api/dog", {
-      method: "POST",
-      body: JSON.stringify(dog)
-  })
-  if (res.status === 200) router.replace(router.asPath)
-  }
-  async function removeFromFavorites() {
-    const res = await fetch("/api/dog", {
-      method: "DELETE",
+  const handleFavorite = async () => {
+    let res = await fetch("/api/dog", {
+      method: isFavoriteDog ? "DELETE" : "POST",
       body: JSON.stringify(dog)
     })
-    if (res.status === 200) router.replace(router.asPath)
+    if (res.status !== 200) return
+    router.replace(router.asPath)
   }
 
   return (
@@ -84,7 +82,7 @@ export default function Dog(props) {
       {
         dog &&
         <main>
-          <DogInfo {...dog}/>
+          <DogInfo handleFavorite={handleFavorite} isFavorite={isFavoriteDog} {...dog}/>
           {/* <div className={styles.controls}>
             {
               !isLoggedIn
@@ -118,13 +116,16 @@ function DogInfo({
   playfulness,
   protectiveness,
   trainability,
-  shedding
+  shedding,
+  handleFavorite,
+  isFavorite
 }) {
   return (
     <>
       <div className={styles.titleGroup}>
         <div>
           <h1>{name}</h1>
+          {isFavorite ? <RiHeartFill onClick={handleFavorite}/>:<RiHeart2Line onClick={handleFavorite}/>}
         </div>
         
           {/* <img src={image_link

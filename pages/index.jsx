@@ -6,30 +6,41 @@ import Header from '../components/header'
 import * as actions from '../context/dog/actions'
 import styles from "../styles/Home.module.css";
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDogContext } from "../context/dog";
+import db from "../db"
+import {find} from "lodash"
 
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
     const { user } = req.session;
-    const props = {};
+    const props = {}
+    let favoriteDogs
     if (user) {
-      props.user = req.session.user;
+      props.favoriteDogs = await db.dog.getAll(user.id)
+      props.user = user
+      props.isLoggedIn = !!user
     }
-    props.isLoggedIn = !!user;
-    return { props };
+    return { 
+      props
+    };
   },
   sessionOptions
 );
 
 export default function Home(props) {
   const [{dogSearchResults}, dispatch] = useDogContext()
+  const {favoriteDogs} = props
   const [query, setQuery] = useState("")
   const [fetching, setFetching] = useState(false)
   const [previousQuery, setPreviousQuery] = useState()
   const inputRef = useRef()
   const inputDivRef = useRef()
+
+  useEffect(()=>{
+    console.log(dogSearchResults.length)
+  }, dogSearchResults)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -44,7 +55,7 @@ export default function Home(props) {
     })
     if (response.status !== 200) return
     // const data = await res.json()
-    console.log(response.data)
+    //console.log(response.data)
     const data = response.data
     dispatch({
       action: actions.SEARCH_DOGS,
@@ -52,7 +63,7 @@ export default function Home(props) {
         ?.map((dog) => ({
           id: dog.name,
           ...dog
-        }))
+        })) || []
     })
     setFetching(false)
   }
@@ -67,9 +78,8 @@ export default function Home(props) {
       <Header isLoggedIn={props.isLoggedIn} username={props?.user?.username} />
       <main className={styles.homepage}>
       <h1>Woof</h1>
-  <p>Where you sniff, search and love dogs.</p>
+  <p>To sniff and love dogs by breed, energy and/or keywords:</p>
         <form onSubmit={handleSubmit} className={styles.form}>
-          <label htmlFor="dog-search">Search by name, energy, and/or keywords:</label>
           <div ref={inputDivRef}>
             <input
               ref={inputRef}
@@ -83,18 +93,34 @@ export default function Home(props) {
           </div>
         </form>
         {
-          fetching
-          ? <Loading />
-          : dogSearchResults?.length
-          ? <DogList dogs={dogSearchResults}/>
-          : <NoResults
-          {...{inputRef, inputDivRef, previousQuery}}
-          clearSearch={() => setQuery("")}/>
-        }
+        fetching ? <Loading/> : 
+        <Switch test={dogSearchResults?.length || 0}>
+          <Case default><DogList dogs={dogSearchResults.map((dog,index)=>{
+            return {isFavorite: !!find(favoriteDogs, {name: dog.name}), ...dog}
+            //return {isFavorite: index%2===0?true:false, ...dog}
+          },[favoriteDogs])}/></Case>
+          <Case value={0}>
+            <NoResults
+              {
+                ...{
+                    inputRef,
+                    inputDivRef,
+                    previousQuery
+                   }
+              }
+              clearSearch={() => setQuery("")}/></Case>
+        </Switch>
+      }
       </main>
     </>
   )
 }
+
+const Switch = ({test, children}) => {
+  return children.find(child=>child.props.value===test) || children.find(child=>child.props.default)
+}
+
+const Case = ({children}) => children
 
 function Loading() {
   return <span className={styles.loading}>Still sniffing</span>
@@ -122,6 +148,27 @@ function NoResults({ inputDivRef, inputRef, previousQuery, clearSearch }) {
       </button>
     </div>
   )
-}
 
-
+  function DogInfo({
+    image_link,
+    name,
+    energy,
+    playfulness,
+    protectiveness,
+    trainability,
+    shedding
+  }) {
+    return (
+        <div className={styles.titleGroup}>
+          <div>
+            <h1>{name}</h1>
+          </div>
+          
+            {/* <img src={image_link
+              ? image_link
+              : "https://via.placeholder.com/128x190?text="} alt={name} /> */}
+            
+        </div>
+        
+      
+    )}}

@@ -1,5 +1,6 @@
 const initialState = {
-  dogSearchResults: []
+  dogSearchResults: [],
+  favoriteDogs: []
 }
 
 export default initialState

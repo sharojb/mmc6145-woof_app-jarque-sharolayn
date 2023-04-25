@@ -1,8 +1,5 @@
 .preview {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 225px;
   height: 100%;
   box-sizing: border-box;
   text-align: center;
@@ -20,6 +17,10 @@
   text-decoration: none;
   padding: 0;
   margin: 0;
+}
+
+.preview img {
+  height: 100%;
 }
 
 /* .preview img {

@@ -3,8 +3,9 @@ import sessionOptions from "../../../config/session"
 import db from '../../../db'
 
 export default withIronSessionApiRoute(
-
+  
   function handler(req, res) {
+    console.log(req.query.action)
     if (req.method === 'POST'){
     switch(req.query.action) {
       case "login":
@@ -43,13 +44,15 @@ async function logout(req, res) {
 async function signup(req, res) {
   try {
     const {username, password} = req.body
+    console.log(db)
     const user = await db.user.create(username, password)
+    console.log(user)
     req.session.user = {
       username: user.username,
       id: user.id
     }
     await req.session.save()
-    res.redirect('/search')
+    res.redirect('/')
   } catch(err) {
     res.status(400).json({error: err.message})
   }
