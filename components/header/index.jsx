@@ -6,9 +6,7 @@ export default function Header(props) {
   const logout = useLogout();
   return (
     <header className={styles.header}>
-      <p>
         <Link href="/">Home</Link>
-      </p>
       <div className={styles.links}>
       {props.isLoggedIn ? (
         <>

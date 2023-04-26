@@ -163,12 +163,7 @@ function NoResults({ inputDivRef, inputRef, previousQuery, clearSearch }) {
           <div>
             <h1>{name}</h1>
           </div>
-          
-            {/* <img src={image_link
-              ? image_link
-              : "https://via.placeholder.com/128x190?text="} alt={name} /> */}
-            
+      
         </div>
         
-      
     )}}

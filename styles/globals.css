@@ -11,7 +11,7 @@ html {
 body {
   margin: 0 auto;
   max-width: 1000px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: var(--text);
   min-height: 100vh;
   box-sizing: border-box;

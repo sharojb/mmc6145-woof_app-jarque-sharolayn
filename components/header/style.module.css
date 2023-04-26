@@ -2,12 +2,22 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-top: 10px;
+  padding: 30px 10px;
   margin-bottom: 40px;
   align-items: center;
+  background-color: #ecbfeb;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
 }
 
 .header .links a {
   margin: 0 10px;
   cursor: pointer;
+}
+
+.header .links a:hover {
+  color: #a988a4;
+  background-color: #f8f9fa;
+  padding: 5px;
+  border-radius: 5px;
 }
