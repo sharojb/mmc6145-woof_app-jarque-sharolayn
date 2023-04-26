@@ -40,7 +40,7 @@ export default function Home(props) {
 
   useEffect(()=>{
     console.log(dogSearchResults.length)
-  }, dogSearchResults)
+  }, [dogSearchResults])
 
   async function handleSubmit(e) {
     e.preventDefault()
